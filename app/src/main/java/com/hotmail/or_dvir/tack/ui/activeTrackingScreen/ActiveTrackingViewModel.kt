@@ -61,6 +61,23 @@ class ActiveTrackingViewModel @Inject constructor(
     }
 
     private fun onSleepWakeButtonClicked() {
+        viewModelScope.launch {
+            need to know whether its sleep/wake - add to model and database entity (and converters)
+
+            need to create the start time... should be saved in shared preferences in case the app
+            dies. when this view model resumes, calculate the new state (hrs/min/sec) and emit to
+            ui
+
+            val window = NapWakeWindowModel(
+                startMillis = ,
+                endMillis = System.currentTimeMillis(),
+            )
+
+
+            repo.insertAll(window)
+        }
+
+        dont forget to reset the start time to currentTimeMillies!!!
         chronometer.reset()
         state.value.apply {
             updateStateWithDefaultTimer(
