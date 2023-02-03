@@ -18,11 +18,10 @@ import kotlinx.coroutines.launch
 class ActiveTrackingViewModel @Inject constructor(
     private val repo: NapWakeWindowRepository
 ) : ViewModel() {
+
     private val chronometer = Chronometer()
 
     private val timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
-
-
         override fun onTick(millisUntilFinished: Long) {
             chronometer.tick()
             state.apply {
