@@ -14,12 +14,12 @@ class NapWakeWindowRepositoryImpl @Inject constructor(
     //  make whatever needs to be non-cancellable
     //  make everything here run in coroutine
 
-    override fun getAll(): List<NapWakeWindowModel> = dao.getAll().map { it.toModel() }
+    override suspend fun getAll(): List<NapWakeWindowModel> = dao.getAll().map { it.toModel() }
 
-    override fun loadWindowById(id: Int) = dao.loadWindowById(id).toModel()
+    override suspend fun loadWindowById(id: Int) = dao.loadWindowById(id).toModel()
 
-    override fun insertAll(vararg windows: NapWakeWindowModel) =
+    override suspend fun insertAll(vararg windows: NapWakeWindowModel) =
         dao.insertAll(windows.map { it.toEntity() })
 
-    override fun delete(windowId: Int) = dao.delete(windowId)
+    override suspend fun delete(windowId: Int) = dao.delete(windowId)
 }
