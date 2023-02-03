@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Tack</string>
+
+    <string name="contentDescription_night">night time</string>
+    <string name="contentDescription_day">day time</string>
+    <string name="sleep">Sleep</string>
+    <string name="wake">Wake</string>
+</resources>
