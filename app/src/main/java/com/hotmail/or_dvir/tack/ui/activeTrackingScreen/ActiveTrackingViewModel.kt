@@ -3,6 +3,7 @@ package com.hotmail.or_dvir.tack.ui.activeTrackingScreen
 import android.app.Application
 import android.content.Context
 import android.os.CountDownTimer
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.datastore.core.DataStore
@@ -16,8 +17,10 @@ import com.hotmail.or_dvir.tack.R
 import com.hotmail.or_dvir.tack.database.repositories.NapWakeWindowRepository
 import com.hotmail.or_dvir.tack.models.Chronometer
 import com.hotmail.or_dvir.tack.models.NapWakeWindowModel
+import com.hotmail.or_dvir.tack.timeElapsed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.lastOrNull
@@ -42,6 +45,7 @@ class ActiveTrackingViewModel @Inject constructor(
 
     private val timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
         override fun onTick(millisUntilFinished: Long) {
+            Log.i("aaaaa", "tick")
             chronometer.tick()
             state.apply {
                 updateState(
@@ -60,23 +64,34 @@ class ActiveTrackingViewModel @Inject constructor(
     }
 
     init {
+        Log.i("aaaaa", "one")
         viewModelScope.launch {
-            val startTimeMillis = readNapWakeWindowStartMillis()
-            if (startTimeMillis == DEFAULT_START_TIME) {
-                writeNapWakeWindowStartMillis()
+            var startTime = readNapWakeWindowStartMillis()
+            Log.i("aaaaa", "two")
+
+            if (startTime == DEFAULT_START_TIME) {
+                startTime = System.currentTimeMillis()
+                writeNapWakeWindowStartMillis(startTime)
             }
+
+            timeElapsed(startTime, System.currentTimeMillis()).let {
+                chronometer.apply {
+                    hours = it.first
+                    minutes = it.second
+                    seconds = it.third
+                }
+            }
+
+            Log.i("aaaaa", "three")
+            timer.start()
         }
-
-
-        timer.start()
-        //todo set chronometer initial value according to previously saved one in data source
     }
 
     private suspend fun readNapWakeWindowStartMillis() =
         context.dataStore.data.lastOrNull()?.get(STORE_KEY_NAP_WAKE_START) ?: DEFAULT_START_TIME
 
-    private fun writeNapWakeWindowStartMillis(millis: Long = System.currentTimeMillis()) {
-        viewModelScope.launch {
+    private fun writeNapWakeWindowStartMillis(millis: Long = System.currentTimeMillis()): Job {
+        return viewModelScope.launch {
             context.dataStore.edit { prefs ->
                 prefs[STORE_KEY_NAP_WAKE_START] = millis
             }
@@ -100,11 +115,11 @@ class ActiveTrackingViewModel @Inject constructor(
 
     private fun onNapWakeButtonClicked() {
         viewModelScope.launch {
-            need to know whether its sleep / wake -add to model and database entity (and converters)
-
-            need to create the start time ... should be saved in shared preferences in case the app
-            dies.when this view model resumes, calculate the new state (hrs/min/sec) and emit to
-            ui
+//            need to know whether its sleep / wake -add to model and database entity (and converters)
+//
+//            need to create the start time ... should be saved in shared preferences in case the app
+//            dies.when this view model resumes, calculate the new state (hrs/min/sec) and emit to
+//            ui
 
             val window = NapWakeWindowModel(
                 startMillis = readNapWakeWindowStartMillis(),
