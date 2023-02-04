@@ -1,5 +1,6 @@
 package com.hotmail.or_dvir.tack.ui.activeTrackingScreen
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -121,84 +122,64 @@ private fun SleepWakeControls(
     isSleep: Boolean,
     onUserAction: OnUserAction
 ) {
-    val outerCornerSize = remember { CornerSize(percent = 50) }
-    val innerCornerSize = remember { ZeroCornerSize }
-    val selectedBackgroundColor = MaterialTheme.colors.secondary
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // todo the 2 chips are almost identical... could create a shared composable
-
         // sleep chip
-        FilterChip(
-            colors = ChipDefaults.filterChipColors(
-                selectedBackgroundColor = selectedBackgroundColor
-            ),
-            shape = MaterialTheme.shapes.small.copy(
-                topStart = outerCornerSize,
-                bottomStart = outerCornerSize,
-                topEnd = innerCornerSize,
-                bottomEnd = innerCornerSize
-            ),
+        ToggleChip(
+            startChip = true,
             enabled = enabled,
             selected = isSleep,
-            onClick = {
-                // only perform click if not already selected
-                if(!isSleep) {
-                    onUserAction(UserAction.SleepWakeButtonClick)
-                }
-            }
-        ) {
-            Text(text = stringResource(R.string.sleep))
-        }
+            textRes = R.string.sleep,
+            onClick = { onUserAction(UserAction.SleepWakeButtonClick) }
+        )
 
         // wake chip
-        val wakeSelected = !isSleep
-        FilterChip(
-            colors = ChipDefaults.filterChipColors(
-                selectedBackgroundColor = selectedBackgroundColor
-            ),
-            shape = MaterialTheme.shapes.small.copy(
-                topStart = innerCornerSize,
-                bottomStart = innerCornerSize,
-                topEnd = outerCornerSize,
-                bottomEnd = outerCornerSize
-            ),
+        ToggleChip(
+            startChip = false,
             enabled = enabled,
-            selected = wakeSelected,
-            onClick = {
-                // only perform click if not already selected
-                if(!wakeSelected) {
-                    onUserAction(UserAction.SleepWakeButtonClick)
-                }
-            }
-        ) {
-            Text(text = stringResource(R.string.wake))
-        }
+            selected = !isSleep,
+            textRes = R.string.wake,
+            onClick = { onUserAction(UserAction.SleepWakeButtonClick) }
+        )
     }
+}
 
-//    what do the chips looks like disabled?????
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+private fun ToggleChip(
+    startChip: Boolean,
+    enabled: Boolean,
+    selected: Boolean,
+    @StringRes textRes: Int,
+    onClick: () -> Unit
+) {
+    val outerCornerSize = remember { CornerSize(percent = 50) }
+    val innerCornerSize = remember { ZeroCornerSize }
 
-//    Row(
-//        modifier = Modifier.fillMaxWidth(),
-//        horizontalArrangement = Arrangement.Center,
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        //todo make this with better button!!!
-//
-//        Text(text = stringResource(R.string.sleep))
-//        Spacer(Modifier.width(5.dp))
-//        Switch(
-//            enabled = enabled,
-//            checked = !isSleep,
-//            onCheckedChange = { onUserAction(UserAction.SleepWakeButtonClick) }
-//        )
-//        Spacer(Modifier.width(5.dp))
-//        Text(text = stringResource(R.string.wake))
-//    }
+    FilterChip(
+        colors = ChipDefaults.filterChipColors(
+            selectedBackgroundColor = MaterialTheme.colors.secondary
+        ),
+        shape = MaterialTheme.shapes.small.copy(
+            topStart = if (startChip) outerCornerSize else innerCornerSize,
+            bottomStart = if (startChip) outerCornerSize else innerCornerSize,
+            topEnd = if (startChip) innerCornerSize else outerCornerSize,
+            bottomEnd = if (startChip) innerCornerSize else outerCornerSize,
+        ),
+        enabled = enabled,
+        selected = selected,
+        onClick = {
+            // only perform click if not already selected
+            if (!selected) {
+                onClick()
+            }
+        }
+    ) {
+        Text(text = stringResource(textRes))
+    }
 }
 
 @Preview(showBackground = true)
