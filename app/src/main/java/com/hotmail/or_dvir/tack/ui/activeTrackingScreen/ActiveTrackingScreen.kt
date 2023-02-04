@@ -4,21 +4,23 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.ZeroCornerSize
+import androidx.compose.material.ChipDefaults
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.FilterChip
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Switch
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -67,7 +69,7 @@ fun ActiveTrackingScreen(
 }
 
 @Composable
-private fun ColumnScope.Timer(
+private fun Timer(
     hours: String,
     minutes: String,
     seconds: String
@@ -112,29 +114,91 @@ private fun DayNightControls(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 private fun SleepWakeControls(
     enabled: Boolean,
     isSleep: Boolean,
     onUserAction: OnUserAction
 ) {
+    val outerCornerSize = remember { CornerSize(percent = 50) }
+    val innerCornerSize = remember { ZeroCornerSize }
+    val selectedBackgroundColor = MaterialTheme.colors.secondary
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        //todo make this with better button!!!
+        // todo the 2 chips are almost identical... could create a shared composable
 
-        Text(text = stringResource(R.string.sleep))
-        Spacer(Modifier.width(5.dp))
-        Switch(
+        // sleep chip
+        FilterChip(
+            colors = ChipDefaults.filterChipColors(
+                selectedBackgroundColor = selectedBackgroundColor
+            ),
+            shape = MaterialTheme.shapes.small.copy(
+                topStart = outerCornerSize,
+                bottomStart = outerCornerSize,
+                topEnd = innerCornerSize,
+                bottomEnd = innerCornerSize
+            ),
             enabled = enabled,
-            checked = !isSleep,
-            onCheckedChange = { onUserAction(UserAction.SleepWakeButtonClick) }
-        )
-        Spacer(Modifier.width(5.dp))
-        Text(text = stringResource(R.string.wake))
+            selected = isSleep,
+            onClick = {
+                // only perform click if not already selected
+                if(!isSleep) {
+                    onUserAction(UserAction.SleepWakeButtonClick)
+                }
+            }
+        ) {
+            Text(text = stringResource(R.string.sleep))
+        }
+
+        // wake chip
+        val wakeSelected = !isSleep
+        FilterChip(
+            colors = ChipDefaults.filterChipColors(
+                selectedBackgroundColor = selectedBackgroundColor
+            ),
+            shape = MaterialTheme.shapes.small.copy(
+                topStart = innerCornerSize,
+                bottomStart = innerCornerSize,
+                topEnd = outerCornerSize,
+                bottomEnd = outerCornerSize
+            ),
+            enabled = enabled,
+            selected = wakeSelected,
+            onClick = {
+                // only perform click if not already selected
+                if(!wakeSelected) {
+                    onUserAction(UserAction.SleepWakeButtonClick)
+                }
+            }
+        ) {
+            Text(text = stringResource(R.string.wake))
+        }
     }
+
+//    what do the chips looks like disabled?????
+
+//    Row(
+//        modifier = Modifier.fillMaxWidth(),
+//        horizontalArrangement = Arrangement.Center,
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        //todo make this with better button!!!
+//
+//        Text(text = stringResource(R.string.sleep))
+//        Spacer(Modifier.width(5.dp))
+//        Switch(
+//            enabled = enabled,
+//            checked = !isSleep,
+//            onCheckedChange = { onUserAction(UserAction.SleepWakeButtonClick) }
+//        )
+//        Spacer(Modifier.width(5.dp))
+//        Text(text = stringResource(R.string.wake))
+//    }
 }
 
 @Preview(showBackground = true)
