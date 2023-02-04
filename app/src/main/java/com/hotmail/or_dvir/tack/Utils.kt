@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleOwner
@@ -14,8 +13,35 @@ import java.util.Date
 import java.util.Locale
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.EmptyCoroutineContext
+import kotlin.math.abs
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+
+private const val ONE_SECOND_MILLIS = 1000L
+private const val ONE_MINUTE_MILLIS = ONE_SECOND_MILLIS * 60
+private const val ONE_HOUR_MILLIS = ONE_MINUTE_MILLIS * 60
+
+/**
+ * @return Triple
+ *  * first - hours
+ *  * second - minutes
+ *  * third - seconds
+ */
+fun timeElapsed(startMillis: Long, endMillis: Long): Triple<Int, Int, Int> {
+    // todo for now, no input validation
+
+    var different = abs(endMillis - startMillis)
+
+    val elapsedHours = different / ONE_HOUR_MILLIS
+    different %= ONE_HOUR_MILLIS
+
+    val elapsedMinutes = different / ONE_MINUTE_MILLIS
+    different %= ONE_MINUTE_MILLIS
+
+    val elapsedSeconds = different / ONE_SECOND_MILLIS
+
+    return Triple(elapsedHours.toInt(), elapsedMinutes.toInt(), elapsedSeconds.toInt())
+}
 
 fun Long.millisToUserFriendlyDate(): String {
     val dateFormat = SimpleDateFormat("EEEE, MMMM dd, yyyy", Locale.getDefault())
