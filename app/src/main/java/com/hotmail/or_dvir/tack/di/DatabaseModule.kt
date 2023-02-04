@@ -25,5 +25,5 @@ object DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideNapWakeWindowDao(db: AppDatabase) = db.napWakeWindowDao()
+    fun provideSleepWakeWindowDao(db: AppDatabase) = db.sleepWakeWindowDao()
 }

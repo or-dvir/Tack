@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.hotmail.or_dvir.tack.R
 import com.hotmail.or_dvir.tack.collectAsStateLifecycleAware
+import com.hotmail.or_dvir.tack.models.DayNight
+import com.hotmail.or_dvir.tack.models.SleepWake
 
 private typealias OnUserAction = (UserAction) -> Unit
 
@@ -57,7 +59,7 @@ fun ActiveTrackingScreen(
 
             SleepWakeControls(
                 enabled = collectedState.dayNight != DayNight.NIGHT,
-                isSleep = collectedState.napWake == NapWake.NAP,
+                isSleep = collectedState.sleepWake == SleepWake.SLEEP,
                 onUserAction = viewModel::handleUserAction
             )
         }
@@ -128,7 +130,7 @@ private fun SleepWakeControls(
         Switch(
             enabled = enabled,
             checked = !isSleep,
-            onCheckedChange = { onUserAction(UserAction.NapWakeButtonClick) }
+            onCheckedChange = { onUserAction(UserAction.SleepWakeButtonClick) }
         )
         Spacer(Modifier.width(5.dp))
         Text(text = stringResource(R.string.wake))

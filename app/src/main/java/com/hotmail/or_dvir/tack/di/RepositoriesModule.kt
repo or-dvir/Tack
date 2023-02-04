@@ -2,8 +2,8 @@ package com.hotmail.or_dvir.tack.di
 
 import android.app.Application
 import com.hotmail.or_dvir.tack.MyApplication
-import com.hotmail.or_dvir.tack.database.repositories.NapWakeWindowRepository
-import com.hotmail.or_dvir.tack.database.repositories.NapWakeWindowRepositoryImpl
+import com.hotmail.or_dvir.tack.database.repositories.SleepWakeWindowRepository
+import com.hotmail.or_dvir.tack.database.repositories.SleepWakeWindowRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -17,9 +17,9 @@ import kotlinx.coroutines.Dispatchers
 abstract class RepositoriesModule {
     @Binds
     @Singleton
-    abstract fun bindNapWakeRepository(
-        impl: NapWakeWindowRepositoryImpl
-    ): NapWakeWindowRepository
+    abstract fun bindSleepWakeRepository(
+        impl: SleepWakeWindowRepositoryImpl
+    ): SleepWakeWindowRepository
 }
 
 @Module

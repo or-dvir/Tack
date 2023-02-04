@@ -1,7 +1,7 @@
 package com.hotmail.or_dvir.tack.database.repositories
 
-import com.hotmail.or_dvir.tack.database.daos.NapWakeWindowDao
-import com.hotmail.or_dvir.tack.models.NapWakeWindowModel
+import com.hotmail.or_dvir.tack.database.daos.SleepWakeWindowDao
+import com.hotmail.or_dvir.tack.models.SleepWakeWindowModel
 import com.hotmail.or_dvir.tack.toEntity
 import com.hotmail.or_dvir.tack.toModel
 import com.hotmail.or_dvir.tack.toModels
@@ -13,22 +13,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 
-class NapWakeWindowRepositoryImpl @Inject constructor(
-    private val dao: NapWakeWindowDao,
+class SleepWakeWindowRepositoryImpl @Inject constructor(
+    private val dao: SleepWakeWindowDao,
     private val scopeThatShouldNotBeCancelled: CoroutineScope,
     private val dispatcher: CoroutineDispatcher,
-) : NapWakeWindowRepository {
+) : SleepWakeWindowRepository {
 
     // todo for now assume all operations are successful
-    override fun getAll(): Flow<List<NapWakeWindowModel>> = dao.getAll().map { it.toModels() }
+    override fun getAll(): Flow<List<SleepWakeWindowModel>> = dao.getAll().map { it.toModels() }
 
-    override suspend fun loadWindowById(id: Int): NapWakeWindowModel {
+    override suspend fun loadWindowById(id: Int): SleepWakeWindowModel {
         return withContext(dispatcher) {
             dao.loadWindowById(id).toModel()
         }
     }
 
-    override suspend fun insertAll(vararg windows: NapWakeWindowModel): List<Long> {
+    override suspend fun insertAll(vararg windows: SleepWakeWindowModel): List<Long> {
         return shouldNotBeCancelled {
             dao.insertAll(windows.map { it.toEntity() })
         }

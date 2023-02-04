@@ -3,15 +3,14 @@ package com.hotmail.or_dvir.tack.ui.activeTrackingScreen
 import android.app.Application
 import android.content.Context
 import android.os.CountDownTimer
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.hotmail.or_dvir.tack.R
-import com.hotmail.or_dvir.tack.database.repositories.NapWakeWindowRepository
+import com.hotmail.or_dvir.tack.database.repositories.SleepWakeWindowRepository
 import com.hotmail.or_dvir.tack.models.Chronometer
-import com.hotmail.or_dvir.tack.models.NapWakeWindowModel
+import com.hotmail.or_dvir.tack.models.DayNight
+import com.hotmail.or_dvir.tack.models.SleepWake
+import com.hotmail.or_dvir.tack.models.SleepWakeWindowModel
 import com.hotmail.or_dvir.tack.timeElapsed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,7 +20,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ActiveTrackingViewModel @Inject constructor(
-    private val repo: NapWakeWindowRepository,
+    private val repo: SleepWakeWindowRepository,
     context: Application
 ) : AndroidViewModel(context) {
 
@@ -54,11 +53,11 @@ class ActiveTrackingViewModel @Inject constructor(
     }
 
     init {
-        var startTime = readNapWakeWindowStartMillis()
+        var startTime = readSleepWakeWindowStartMillis()
 
         if (startTime == DEFAULT_START_TIME) {
             startTime = System.currentTimeMillis()
-            writeNapWakeWindowStartMillis(startTime)
+            writeSleepWakeWindowStartMillis(startTime)
         }
 
         timeElapsed(startTime, System.currentTimeMillis()).let {
@@ -72,10 +71,10 @@ class ActiveTrackingViewModel @Inject constructor(
         timer.start()
     }
 
-    private fun readNapWakeWindowStartMillis() =
+    private fun readSleepWakeWindowStartMillis() =
         sharedPrefs.getLong(PREFS_KEY_START_TIME, DEFAULT_START_TIME)
 
-    private fun writeNapWakeWindowStartMillis(millis: Long = System.currentTimeMillis()) {
+    private fun writeSleepWakeWindowStartMillis(millis: Long = System.currentTimeMillis()) {
         sharedPrefs.edit {
             putLong(PREFS_KEY_START_TIME, millis)
         }
@@ -92,33 +91,32 @@ class ActiveTrackingViewModel @Inject constructor(
     fun handleUserAction(action: UserAction) {
         when (action) {
             UserAction.DayNightButtonClick -> onDayNightButtonClicked()
-            UserAction.NapWakeButtonClick -> onNapWakeButtonClicked()
+            UserAction.SleepWakeButtonClick -> onSleepWakeButtonClicked()
         }
     }
 
-    private fun onNapWakeButtonClicked() {
+    private fun insertCurrentStateToDb() {
         viewModelScope.launch {
-//            need to know whether its sleep / wake -add to model and database entity (and converters)
-//
-//            need to create the start time ... should be saved in shared preferences in case the app
-//            dies.when this view model resumes, calculate the new state (hrs/min/sec) and emit to
-//            ui
-
-            val window = NapWakeWindowModel(
-                startMillis = readNapWakeWindowStartMillis(),
+            val window = SleepWakeWindowModel(
+                startMillis = readSleepWakeWindowStartMillis(),
                 endMillis = System.currentTimeMillis(),
+                sleepWake = state.value.sleepWake
             )
 
             repo.insertAll(window)
         }
+    }
 
-        // starting a new nap/wake window. resetting start time
-        writeNapWakeWindowStartMillis()
+    private fun onSleepWakeButtonClicked() {
+        insertCurrentStateToDb()
+
+        // starting a new sleep/wake window. resetting start time
+        writeSleepWakeWindowStartMillis()
         chronometer.reset()
         state.value.apply {
             updateStateWithDefaultTimer(
                 newState = copy(
-                    napWake = napWake.reverse()
+                    sleepWake = sleepWake.reverse()
                 )
             )
         }
@@ -126,15 +124,16 @@ class ActiveTrackingViewModel @Inject constructor(
 
     private fun onDayNightButtonClicked() {
         state.value.apply {
-            val newDayNight = dayNight.reverse()
+            insertCurrentStateToDb()
 
+            val newDayNight = dayNight.reverse()
             // we stop tracking at night
             if (newDayNight == DayNight.NIGHT) {
-                writeNapWakeWindowStartMillis(DEFAULT_START_TIME)
+                writeSleepWakeWindowStartMillis(DEFAULT_START_TIME)
                 chronometer.reset()
                 timer.cancel()
             } else {
-                writeNapWakeWindowStartMillis()
+                writeSleepWakeWindowStartMillis()
                 timer.start()
             }
 
@@ -163,43 +162,14 @@ class ActiveTrackingViewModel @Inject constructor(
     }
 }
 
-enum class DayNight(
-    @DrawableRes
-    val iconRes: Int,
-    @StringRes
-    val contentDescriptionRes: Int
-) {
-    DAY(
-        contentDescriptionRes = R.string.contentDescription_day,
-        iconRes = R.drawable.ic_day
-    ),
-    NIGHT(
-        contentDescriptionRes = R.string.contentDescription_night,
-        iconRes = R.drawable.ic_night
-    );
-
-    @DrawableRes
-    fun reverseIconRes() = reverse().iconRes
-
-    @StringRes
-    fun reverseContentDescriptionRes() = reverse().contentDescriptionRes
-    fun reverse(): DayNight = if (this == NIGHT) DAY else NIGHT
-}
-
-enum class NapWake {
-    NAP, WAKE;
-
-    fun reverse(): NapWake = if (this == NAP) WAKE else NAP
-}
-
 sealed class UserAction {
     object DayNightButtonClick : UserAction()
-    object NapWakeButtonClick : UserAction()
+    object SleepWakeButtonClick : UserAction()
 }
 
 data class ActiveTrackingState(
     val dayNight: DayNight = DayNight.DAY,
-    val napWake: NapWake = NapWake.WAKE,
+    val sleepWake: SleepWake = SleepWake.WAKE,
     val hours: String = DEFAULT_HOURS,
     val minutes: String = DEFAULT_MINUTES_SECONDS,
     val seconds: String = DEFAULT_MINUTES_SECONDS,
