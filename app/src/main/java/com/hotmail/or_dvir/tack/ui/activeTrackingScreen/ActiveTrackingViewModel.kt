@@ -148,9 +148,9 @@ class ActiveTrackingViewModel @Inject constructor(
     private fun updateStateWithDefaultTimer(newState: ActiveTrackingState) {
         updateState(
             newState.copy(
-                hours = ActiveTrackingState.DEFAULT_HOURS,
-                minutes = ActiveTrackingState.DEFAULT_MINUTES_SECONDS,
-                seconds = ActiveTrackingState.DEFAULT_MINUTES_SECONDS,
+                hours = ActiveTrackingState.DEFAULT_HRS_MIN_SEC,
+                minutes = ActiveTrackingState.DEFAULT_HRS_MIN_SEC,
+                seconds = ActiveTrackingState.DEFAULT_HRS_MIN_SEC,
             )
         )
     }
@@ -170,12 +170,11 @@ sealed class UserAction {
 data class ActiveTrackingState(
     val dayNight: DayNight = DayNight.DAY,
     val sleepWake: SleepWake = SleepWake.WAKE,
-    val hours: String = DEFAULT_HOURS,
-    val minutes: String = DEFAULT_MINUTES_SECONDS,
-    val seconds: String = DEFAULT_MINUTES_SECONDS,
+    val hours: String = DEFAULT_HRS_MIN_SEC,
+    val minutes: String = DEFAULT_HRS_MIN_SEC,
+    val seconds: String = DEFAULT_HRS_MIN_SEC,
 ) {
     companion object {
-        const val DEFAULT_MINUTES_SECONDS = "00"
-        const val DEFAULT_HOURS = "0"
+        const val DEFAULT_HRS_MIN_SEC = "00"
     }
 }

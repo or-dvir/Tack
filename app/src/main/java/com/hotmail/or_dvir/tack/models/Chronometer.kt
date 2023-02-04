@@ -8,7 +8,7 @@ class Chronometer {
     }
 
     var hours: Int = 0
-    val hoursStr get() = minutes.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$hours"
+    val hoursStr get() = hours.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$hours"
 
     var minutes: Int = 0
     val minutesStr get() = minutes.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$minutes"
