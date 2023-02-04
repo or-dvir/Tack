@@ -3,14 +3,9 @@ package com.hotmail.or_dvir.tack.ui.activeTrackingScreen
 import android.app.Application
 import android.content.Context
 import android.os.CountDownTimer
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.datastore.core.DataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.longPreferencesKey
-import androidx.datastore.preferences.preferencesDataStore
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.hotmail.or_dvir.tack.R
@@ -20,32 +15,27 @@ import com.hotmail.or_dvir.tack.models.NapWakeWindowModel
 import com.hotmail.or_dvir.tack.timeElapsed
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.launch
-
-private const val DATA_STORE_NAME = "TackDataStore"
-val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = DATA_STORE_NAME)
 
 @HiltViewModel
 class ActiveTrackingViewModel @Inject constructor(
     private val repo: NapWakeWindowRepository,
-    private val context: Application
+    context: Application
 ) : AndroidViewModel(context) {
 
     companion object {
         private const val DEFAULT_START_TIME = -1L
-        private const val KEY_NAME_NAP_WAKE_START = "NAP_WAKE_START"
-        private val STORE_KEY_NAP_WAKE_START = longPreferencesKey(KEY_NAME_NAP_WAKE_START)
+        private const val SHARED_PREFS_NAME = "SHARED_PREFS_START_TIME"
+        private const val PREFS_KEY_START_TIME = "PREFS_KEY_START_TIME"
     }
 
+    private val sharedPrefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
     private val chronometer = Chronometer()
 
     private val timer = object : CountDownTimer(Long.MAX_VALUE, 1000) {
         override fun onTick(millisUntilFinished: Long) {
-            Log.i("aaaaa", "tick")
             chronometer.tick()
             state.apply {
                 updateState(
@@ -64,37 +54,30 @@ class ActiveTrackingViewModel @Inject constructor(
     }
 
     init {
-        Log.i("aaaaa", "one")
-        viewModelScope.launch {
-            var startTime = readNapWakeWindowStartMillis()
-            Log.i("aaaaa", "two")
+        var startTime = readNapWakeWindowStartMillis()
 
-            if (startTime == DEFAULT_START_TIME) {
-                startTime = System.currentTimeMillis()
-                writeNapWakeWindowStartMillis(startTime)
-            }
-
-            timeElapsed(startTime, System.currentTimeMillis()).let {
-                chronometer.apply {
-                    hours = it.first
-                    minutes = it.second
-                    seconds = it.third
-                }
-            }
-
-            Log.i("aaaaa", "three")
-            timer.start()
+        if (startTime == DEFAULT_START_TIME) {
+            startTime = System.currentTimeMillis()
+            writeNapWakeWindowStartMillis(startTime)
         }
+
+        timeElapsed(startTime, System.currentTimeMillis()).let {
+            chronometer.apply {
+                hours = it.first
+                minutes = it.second
+                seconds = it.third
+            }
+        }
+
+        timer.start()
     }
 
-    private suspend fun readNapWakeWindowStartMillis() =
-        context.dataStore.data.lastOrNull()?.get(STORE_KEY_NAP_WAKE_START) ?: DEFAULT_START_TIME
+    private fun readNapWakeWindowStartMillis() =
+        sharedPrefs.getLong(PREFS_KEY_START_TIME, DEFAULT_START_TIME)
 
-    private fun writeNapWakeWindowStartMillis(millis: Long = System.currentTimeMillis()): Job {
-        return viewModelScope.launch {
-            context.dataStore.edit { prefs ->
-                prefs[STORE_KEY_NAP_WAKE_START] = millis
-            }
+    private fun writeNapWakeWindowStartMillis(millis: Long = System.currentTimeMillis()) {
+        sharedPrefs.edit {
+            putLong(PREFS_KEY_START_TIME, millis)
         }
     }
 

@@ -11,15 +11,9 @@ class Chronometer {
     val hoursStr get() = hours.toString()
 
     var minutes: Int = 0
-        set(value) {
-            field = if (value > MAX_SEC_MIN) MAX_SEC_MIN else value
-        }
     val minutesStr get() = minutes.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$minutes"
 
     var seconds: Int = 0
-        set(value) {
-            field = if (value > MAX_SEC_MIN) MAX_SEC_MIN else value
-        }
     val secondsStr get() = seconds.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$seconds"
 
     fun reset() {
