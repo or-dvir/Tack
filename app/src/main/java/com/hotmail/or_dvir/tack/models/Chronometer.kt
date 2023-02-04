@@ -7,15 +7,23 @@ class Chronometer {
         const val SINGLE_DIGIT_LIMIT = 10
     }
 
-    private var hours: Int = 0
+    var hours: Int = 0
     val hoursStr get() = hours.toString()
-    private var minutes: Int = 0
+
+    var minutes: Int = 0
+        set(value) {
+            field = if (value > MAX_SEC_MIN) MAX_SEC_MIN else value
+        }
     val minutesStr get() = minutes.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$minutes"
-    private var seconds: Int = 0
+
+    var seconds: Int = 0
+        set(value) {
+            field = if (value > MAX_SEC_MIN) MAX_SEC_MIN else value
+        }
     val secondsStr get() = seconds.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$seconds"
 
     fun reset() {
-        hours  = 0
+        hours = 0
         minutes = 0
         seconds = 0
     }
