@@ -57,7 +57,7 @@ fun ActiveTrackingScreen(
 
             SleepWakeControls(
                 enabled = collectedState.dayNight != DayNight.NIGHT,
-                isSleep = collectedState.sleepWake == SleepWake.SLEEP,
+                isSleep = collectedState.napWake == NapWake.NAP,
                 onUserAction = viewModel::handleUserAction
             )
         }
@@ -128,7 +128,7 @@ private fun SleepWakeControls(
         Switch(
             enabled = enabled,
             checked = !isSleep,
-            onCheckedChange = { onUserAction(UserAction.SleepWakeButtonClick) }
+            onCheckedChange = { onUserAction(UserAction.NapWakeButtonClick) }
         )
         Spacer(Modifier.width(5.dp))
         Text(text = stringResource(R.string.wake))
