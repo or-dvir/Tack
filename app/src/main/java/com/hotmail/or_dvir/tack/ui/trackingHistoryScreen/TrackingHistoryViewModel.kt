@@ -20,11 +20,9 @@ class TrackingHistoryViewModel @Inject constructor(
     val groupedWindowsFlow = repo.getAllSortedByStartDescending().map { allWindows ->
 
         // todo is this part too inefficient??? how is the performance??
-        val calendars = allWindows.map {
+        allWindows.map {
             it to Calendar.getInstance().apply { timeInMillis = it.startMillis }
-        }
-
-        calendars.groupBy {
+        }.groupBy {
             Triple(
                 it.second.get(Calendar.YEAR),
                 it.second.get(Calendar.MONTH),
@@ -33,22 +31,17 @@ class TrackingHistoryViewModel @Inject constructor(
         }.mapValues { entry ->
             entry.value.map { it.first }
         }
-
-        i stopped here. looks like i got a map of what i wanted
-
     }
-}
 
-init {
-    viewModelScope.launch {
-        windows.collectLatest { map ->
-            map.forEach {
-                val ttt =
-                    "${it.key} -> ${it.value.joinToString(separator = " ;;; ") { cal -> cal.timeInMillis.millisToUserFriendlyDate() }}"
-                Log.i("aaaaa", ttt)
-            }
-        }
-    }
-}
-
+//    init {
+//        viewModelScope.launch {
+//            groupedWindowsFlow.collectLatest { map ->
+//                map.forEach {
+//                    val ttt =
+//                        "${it.key} -> ${it.value.joinToString(separator = " ;;; ") { cal -> cal.timeInMillis.millisToUserFriendlyDate() }}"
+//                    Log.i("aaaaa", ttt)
+//                }
+//            }
+//        }
+//    }
 }
