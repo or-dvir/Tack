@@ -155,6 +155,9 @@ class ActiveTrackingViewModel @Inject constructor(
         )
     }
 
+    i stopped here
+    next step is to create a screen for viewing the data
+    will require a navigation library...
     private fun updateState(newState: ActiveTrackingState) {
         viewModelScope.launch {
             _state.emit(newState)
