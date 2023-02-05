@@ -38,21 +38,22 @@ class TrackingHistoryScreen : Screen {
 
         // todo collect this flow as lifecycle aware.
         //  do i really need to? this is a COLD flow
-        val windowsMap = viewModel.groupedWindowsFlow.collectAsState(initial = emptyMap()).value
+        val windowsMap = viewModel.groupedWindowsFlow.collectAsState(initial = emptyList()).value
+//        val windowsMap = viewModel.groupedWindowsFlow.collectAsState(initial = emptyMap()).value
 
         // todo export this to a separate composable???
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
-            windowsMap.forEach { (_, windowsList) ->
+            windowsMap.forEach { historyItems ->
                 stickyHeader {
                     // just use the first sleep/wake window for the header
-                    SleepWakeWindowStickyHeader(windowsList.first().startMillis)
+                    SleepWakeWindowStickyHeader(historyItems.windows.first().startMillis)
                 }
 
-                itemsIndexed(windowsList) { index, window ->
+                itemsIndexed(historyItems.windows) { index, window ->
                     SleepWakeWindowRow(window)
-                    if (index != windowsList.lastIndex) {
+                    if (index != historyItems.windows.lastIndex) {
                         Divider()
                     }
                 }

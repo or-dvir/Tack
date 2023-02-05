@@ -86,6 +86,11 @@ class ActiveTrackingViewModel @Inject constructor(
         super.onCleared()
     }
 
+    //TODO BUG BUG BUG BUG BUG BUG BUG
+    // must also save in shared preferences whether the last session was sleep/wake and day/night!!!
+
+
+
     private val _state = MutableStateFlow(ActiveTrackingState())
     val state = _state.asStateFlow()
 

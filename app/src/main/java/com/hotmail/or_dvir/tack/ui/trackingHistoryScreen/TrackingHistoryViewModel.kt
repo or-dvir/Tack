@@ -22,10 +22,10 @@ class TrackingHistoryViewModel @Inject constructor(
                 it.second.get(Calendar.MONTH),
                 it.second.get(Calendar.DAY_OF_MONTH)
             )
-        }.mapValues { entry ->
-            entry.value.map {
-                it.first
-            }
+        }.map { entry ->
+            HistoryListItems(
+                entry.value.map { it.first }
+            )
         }
     }
 }
