@@ -17,14 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    //todo
-    //  Nap daily total
-    //      also wake
-    //  shortest daily nap
-    //      also wake
-    //  longest daily nap
-    //      also wake
-
     @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

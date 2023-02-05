@@ -86,6 +86,8 @@ class ActiveTrackingViewModel @Inject constructor(
         super.onCleared()
     }
 
+
+    FIX ME FIRST!!!!
     //TODO BUG BUG BUG BUG BUG BUG BUG
     // must also save in shared preferences whether the last session was sleep/wake and day/night!!!
 
