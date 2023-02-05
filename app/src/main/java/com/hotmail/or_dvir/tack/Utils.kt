@@ -21,6 +21,9 @@ private const val ONE_SECOND_MILLIS = 1000L
 private const val ONE_MINUTE_MILLIS = ONE_SECOND_MILLIS * 60
 private const val ONE_HOUR_MILLIS = ONE_MINUTE_MILLIS * 60
 
+const val MAX_SEC_MIN = 59
+const val SINGLE_DIGIT_LIMIT = 10
+
 /**
  * @return Triple
  *  * first - hours
@@ -57,6 +60,7 @@ fun Long.millisToUserFriendlyTime(): String {
 @Suppress("StateFlowValueCalledInComposition")
 @Composable
 fun <T> StateFlow<T>.collectAsStateLifecycleAware(
+//fun <T> StateFlow<T>.collectAsStateLifecycleAware(
     context: CoroutineContext = EmptyCoroutineContext
 //    context: CoroutineContext = rememberCoroutineScope().coroutineContext
 ): State<T> = collectAsStateLifecycleAware(initial = value, context = context)

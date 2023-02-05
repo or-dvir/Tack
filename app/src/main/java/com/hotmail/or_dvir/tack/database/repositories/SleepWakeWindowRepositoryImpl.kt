@@ -20,7 +20,7 @@ class SleepWakeWindowRepositoryImpl @Inject constructor(
 ) : SleepWakeWindowRepository {
 
     // todo for now assume all operations are successful
-    override fun getAll(): Flow<List<SleepWakeWindowModel>> = dao.getAll().map { it.toModels() }
+    override fun getAllSortedByStartDescending(): Flow<List<SleepWakeWindowModel>> = dao.getAllSortedByStartDescending().map { it.toModels() }
 
     override suspend fun loadWindowById(id: Int): SleepWakeWindowModel {
         return withContext(dispatcher) {

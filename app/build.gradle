@@ -11,7 +11,7 @@ android {
 
     defaultConfig {
         applicationId "com.hotmail.or_dvir.tack"
-        minSdk 25
+        minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
@@ -107,4 +107,5 @@ dependencies {
     def voyagerVersion = "1.0.0-rc03"
     implementation "cafe.adriel.voyager:voyager-navigator:$voyagerVersion"
     implementation "cafe.adriel.voyager:voyager-hilt:$voyagerVersion"
+    implementation "cafe.adriel.voyager:voyager-transitions:$voyagerVersion"
 }

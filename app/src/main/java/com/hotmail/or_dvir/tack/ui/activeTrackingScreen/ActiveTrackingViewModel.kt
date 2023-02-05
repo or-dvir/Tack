@@ -13,6 +13,7 @@ import com.hotmail.or_dvir.tack.models.SleepWake
 import com.hotmail.or_dvir.tack.models.SleepWakeWindowModel
 import com.hotmail.or_dvir.tack.timeElapsed
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -96,14 +97,22 @@ class ActiveTrackingViewModel @Inject constructor(
     }
 
     private fun insertCurrentStateToDb() {
-        viewModelScope.launch {
-            val window = SleepWakeWindowModel(
-                startMillis = readSleepWakeWindowStartMillis(),
-                endMillis = System.currentTimeMillis(),
-                sleepWake = state.value.sleepWake
-            )
+        val start = readSleepWakeWindowStartMillis()
+        val end = System.currentTimeMillis()
 
-            repo.insertAll(window)
+        // we don't log anything less than 5 minutes
+        if ((end - start) < TimeUnit.MINUTES.toMillis(5)) {
+            return
+        }
+
+        viewModelScope.launch {
+            repo.insertAll(
+                SleepWakeWindowModel(
+                    startMillis = start,
+                    endMillis = end,
+                    sleepWake = state.value.sleepWake
+                )
+            )
         }
     }
 
@@ -155,9 +164,6 @@ class ActiveTrackingViewModel @Inject constructor(
         )
     }
 
-    i stopped here
-    next step is to create a screen for viewing the data
-    will require a navigation library...
     private fun updateState(newState: ActiveTrackingState) {
         viewModelScope.launch {
             _state.emit(newState)

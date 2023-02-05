@@ -1,11 +1,9 @@
 package com.hotmail.or_dvir.tack.models
 
-class Chronometer {
+import com.hotmail.or_dvir.tack.MAX_SEC_MIN
+import com.hotmail.or_dvir.tack.SINGLE_DIGIT_LIMIT
 
-    private companion object {
-        const val MAX_SEC_MIN = 59
-        const val SINGLE_DIGIT_LIMIT = 10
-    }
+class Chronometer {
 
     var hours: Int = 0
     val hoursStr get() = hours.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$hours"

@@ -54,8 +54,6 @@ class ActiveTrackingScreen : Screen {
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
-
-
             viewModel.apply {
                 val collectedState = viewModel.state.collectAsStateLifecycleAware().value
 
