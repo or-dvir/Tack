@@ -5,4 +5,5 @@
     <string name="contentDescription_day">day time</string>
     <string name="sleep">Sleep</string>
     <string name="wake">Wake</string>
+    <string name="contentDescription_trackingHistory">Tracking History</string>
 </resources>

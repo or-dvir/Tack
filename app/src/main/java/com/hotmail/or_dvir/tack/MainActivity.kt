@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.navigator.Navigator
 import com.hotmail.or_dvir.tack.ui.activeTrackingScreen.ActiveTrackingScreen
 import com.hotmail.or_dvir.tack.ui.theme.TackTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,7 +40,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    ActiveTrackingScreen()
+                    Navigator(ActiveTrackingScreen())
                 }
             }
         }
