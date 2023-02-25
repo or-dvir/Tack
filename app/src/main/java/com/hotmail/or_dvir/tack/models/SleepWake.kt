@@ -7,6 +7,8 @@ enum class SleepWake(
     @DrawableRes
     val iconRes: Int,
 ) {
+    //WARNING!!! WARNING!!! WARNING!!!
+    // do NOT rename!!! used in shared preferences
     SLEEP(R.drawable.ic_night),
     WAKE(R.drawable.ic_day);
 

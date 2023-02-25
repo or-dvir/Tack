@@ -10,6 +10,8 @@ enum class DayNight(
     @StringRes
     val contentDescriptionRes: Int
 ) {
+    //WARNING!!! WARNING!!! WARNING!!!
+    // do NOT rename!!! used in shared preferences
     DAY(
         contentDescriptionRes = R.string.contentDescription_day,
         iconRes = R.drawable.ic_day
