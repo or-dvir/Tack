@@ -60,9 +60,7 @@ fun Long.millisToUserFriendlyTime(): String {
 @Suppress("StateFlowValueCalledInComposition")
 @Composable
 fun <T> StateFlow<T>.collectAsStateLifecycleAware(
-//fun <T> StateFlow<T>.collectAsStateLifecycleAware(
     context: CoroutineContext = EmptyCoroutineContext
-//    context: CoroutineContext = rememberCoroutineScope().coroutineContext
 ): State<T> = collectAsStateLifecycleAware(initial = value, context = context)
 
 @Composable
