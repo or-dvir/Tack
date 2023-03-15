@@ -48,7 +48,6 @@ class TrackingHistoryScreen : Screen {
         //  do i really need to? this is a COLD flow
         val windowsList = viewModel.groupedWindowsFlow.collectAsState(initial = emptyList()).value
 
-        // todo export this to a separate composable???
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {

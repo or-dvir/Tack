@@ -31,7 +31,5 @@ object RepositoriesModuleHelper {
         (app as MyApplication).scopeThatShouldNotBeCancelled
 
     @Provides
-    // todo do i need this?
-//    @Singleton
     fun provideCoroutineDispatcher() = Dispatchers.IO
 }
