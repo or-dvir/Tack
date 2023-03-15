@@ -10,4 +10,5 @@
     <string name="longest_s">Longest:\n%s</string>
     <string name="shortest_s">Shortest:\n%s</string>
     <string name="total_s">Total:\n%s</string>
+    <string name="noEntries">You don\'t have any entries yet</string>
 </resources>

@@ -39,7 +39,6 @@ import com.hotmail.or_dvir.tack.models.SleepWakeWindowModel
 import java.util.concurrent.TimeUnit
 
 class TrackingHistoryScreen : Screen {
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val viewModel = getViewModel<TrackingHistoryViewModel>()
@@ -48,6 +47,16 @@ class TrackingHistoryScreen : Screen {
         //  do i really need to? this is a COLD flow
         val windowsList = viewModel.groupedWindowsFlow.collectAsState(initial = emptyList()).value
 
+        if(windowsList.isEmpty()) {
+            EmptyContent()
+        } else {
+            NonEmptyContent(windowsList)
+        }
+    }
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    private fun NonEmptyContent(windowsList: List<HistoryListItems>) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
@@ -66,6 +75,16 @@ class TrackingHistoryScreen : Screen {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun EmptyContent() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(stringResource(R.string.noEntries))
         }
     }
 
