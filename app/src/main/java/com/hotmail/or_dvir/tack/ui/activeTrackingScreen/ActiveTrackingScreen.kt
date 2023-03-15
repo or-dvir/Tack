@@ -93,7 +93,6 @@ class ActiveTrackingScreen : Screen {
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .border(2.dp, MaterialTheme.colors.primary, CircleShape)
-                .border(2.dp, MaterialTheme.colors.secondary)
         ) {
             //the Text below will be automatically resized to fit the width
             var readyToDraw by remember { mutableStateOf(false) }
