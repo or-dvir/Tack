@@ -104,4 +104,8 @@ dependencies {
     implementation "cafe.adriel.voyager:voyager-navigator:$voyagerVersion"
     implementation "cafe.adriel.voyager:voyager-hilt:$voyagerVersion"
     implementation "cafe.adriel.voyager:voyager-transitions:$voyagerVersion"
+
+    // system UI controller
+    def accompanistVersion = "0.28.0"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:$accompanistVersion"
 }
