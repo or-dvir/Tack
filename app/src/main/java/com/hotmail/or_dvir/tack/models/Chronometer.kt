@@ -1,6 +1,6 @@
 package com.hotmail.or_dvir.tack.models
 
-import com.hotmail.or_dvir.tack.MAX_SEC_MIN
+import com.hotmail.or_dvir.tack.MAX_SECONDS_MINUTES
 import com.hotmail.or_dvir.tack.SINGLE_DIGIT_LIMIT
 
 class Chronometer {
@@ -22,7 +22,7 @@ class Chronometer {
 
     fun tick() {
         seconds++
-        if (seconds > MAX_SEC_MIN) {
+        if (seconds > MAX_SECONDS_MINUTES) {
             tickMinutes()
             seconds = 0
         }
@@ -30,7 +30,7 @@ class Chronometer {
 
     private fun tickMinutes() {
         minutes++
-        if (minutes > MAX_SEC_MIN) {
+        if (minutes > MAX_SECONDS_MINUTES) {
             hours++
             minutes = 0
         }

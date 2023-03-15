@@ -21,8 +21,31 @@ private const val ONE_SECOND_MILLIS = 1000L
 private const val ONE_MINUTE_MILLIS = ONE_SECOND_MILLIS * 60
 private const val ONE_HOUR_MILLIS = ONE_MINUTE_MILLIS * 60
 
-const val MAX_SEC_MIN = 59
+const val MAX_SECONDS_MINUTES = 59
 const val SINGLE_DIGIT_LIMIT = 10
+
+fun elapsedTimeUserFriendly(startMillis: Long, endMillis: Long) =
+    abs(endMillis - startMillis).millisElapsedTimeUserFriendly()
+
+fun elapsedTime(startMillis: Long, endMillis: Long) =
+    abs(endMillis - startMillis).millisToHoursMinutesSeconds()
+
+fun Long.millisElapsedTimeUserFriendly(): String {
+    val elapsed = this.millisToHoursMinutesSeconds()
+
+    val hours = elapsed.first.let { hrs ->
+        hrs.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$hrs"
+    }
+
+    val minutes = elapsed.second.let { min ->
+        min.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$min"
+    }
+    val seconds = elapsed.third.let { sec ->
+        sec.takeUnless { it < SINGLE_DIGIT_LIMIT }?.toString() ?: "0$sec"
+    }
+
+    return "$hours:$minutes:$seconds"
+}
 
 /**
  * @return Triple
@@ -30,18 +53,16 @@ const val SINGLE_DIGIT_LIMIT = 10
  *  * second - minutes
  *  * third - seconds
  */
-fun timeElapsed(startMillis: Long, endMillis: Long): Triple<Int, Int, Int> {
-    // todo for now, no input validation
+fun Long.millisToHoursMinutesSeconds(): Triple<Int, Int, Int> {
+    var millisMutable = this
 
-    var different = abs(endMillis - startMillis)
+    val elapsedHours = millisMutable / ONE_HOUR_MILLIS
+    millisMutable %= ONE_HOUR_MILLIS
 
-    val elapsedHours = different / ONE_HOUR_MILLIS
-    different %= ONE_HOUR_MILLIS
+    val elapsedMinutes = millisMutable / ONE_MINUTE_MILLIS
+    millisMutable %= ONE_MINUTE_MILLIS
 
-    val elapsedMinutes = different / ONE_MINUTE_MILLIS
-    different %= ONE_MINUTE_MILLIS
-
-    val elapsedSeconds = different / ONE_SECOND_MILLIS
+    val elapsedSeconds = millisMutable / ONE_SECOND_MILLIS
 
     return Triple(elapsedHours.toInt(), elapsedMinutes.toInt(), elapsedSeconds.toInt())
 }

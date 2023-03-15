@@ -24,7 +24,7 @@ class TimeElapsedTest {
         }
 
         endCal.add(Calendar.SECOND, secondsAdded)
-        val elapsed = timeElapsed(startCal.timeInMillis, endCal.timeInMillis)
+        val elapsed = elapsedTime(startCal.timeInMillis, endCal.timeInMillis)
 
         assertEquals(0, elapsed.first)
         assertEquals(0, elapsed.second)
@@ -39,7 +39,7 @@ class TimeElapsedTest {
         }
 
         endCal.add(Calendar.MINUTE, minutesAdded)
-        val elapsed = timeElapsed(startCal.timeInMillis, endCal.timeInMillis)
+        val elapsed = elapsedTime(startCal.timeInMillis, endCal.timeInMillis)
 
         assertEquals(0, elapsed.first)
         assertEquals(minutesAdded, elapsed.second)
@@ -54,7 +54,7 @@ class TimeElapsedTest {
         }
 
         endCal.add(Calendar.HOUR_OF_DAY, hoursAdded)
-        val elapsed = timeElapsed(startCal.timeInMillis, endCal.timeInMillis)
+        val elapsed = elapsedTime(startCal.timeInMillis, endCal.timeInMillis)
 
         assertEquals(hoursAdded, elapsed.first)
         assertEquals(0, elapsed.second)

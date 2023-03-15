@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,11 +23,15 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.hotmail.or_dvir.tack.R
 import com.hotmail.or_dvir.tack.millisToUserFriendlyDate
 import com.hotmail.or_dvir.tack.millisToUserFriendlyTime
 import com.hotmail.or_dvir.tack.models.SleepWake
@@ -41,14 +46,13 @@ class TrackingHistoryScreen : Screen {
 
         // todo collect this flow as lifecycle aware.
         //  do i really need to? this is a COLD flow
-        val windowsMap = viewModel.groupedWindowsFlow.collectAsState(initial = emptyList()).value
-//        val windowsMap = viewModel.groupedWindowsFlow.collectAsState(initial = emptyMap()).value
+        val windowsList = viewModel.groupedWindowsFlow.collectAsState(initial = emptyList()).value
 
         // todo export this to a separate composable???
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
-            windowsMap.forEach { historyItems ->
+            windowsList.forEach { historyItems ->
                 stickyHeader {
                     // just use the first sleep/wake window for the header
                     SleepWakeWindowStickyHeader(historyItems.windows.first().startMillis)
@@ -63,9 +67,6 @@ class TrackingHistoryScreen : Screen {
                     }
                 }
             }
-
-            // todo
-            //  each group has summary (longest//shortest nap/wake
         }
     }
 
@@ -76,54 +77,61 @@ class TrackingHistoryScreen : Screen {
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
+            HistoryListItemSummaryTitle(stringResource(R.string.sleep))
+            HistoryListItemSummaryRow {
                 history.longestSleep?.let {
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        textAlign = TextAlign.Center,
-                        text = "Longest Sleep:\n$it"
-                    )
+                    HistoryListItemText(stringResource(R.string.longest_s, it))
                 }
 
                 history.shortestSleep?.let {
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        textAlign = TextAlign.Center,
-                        text = "Shortest Sleep:\n$it"
-                    )
+                    HistoryListItemText(stringResource(R.string.shortest_s, it))
                 }
+
+                HistoryListItemText(stringResource(R.string.total_s, history.totalSleep))
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center
-            ) {
+            HistoryListItemSummaryTitle(stringResource(R.string.wake))
+            HistoryListItemSummaryRow {
                 history.longestWake?.let {
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        textAlign = TextAlign.Center,
-                        text = "Longest Wake:\n$it"
-                    )
+                    HistoryListItemText(stringResource(R.string.longest_s, it))
                 }
 
                 history.shortestWake?.let {
-                    Text(
-                        modifier = Modifier.padding(4.dp),
-                        textAlign = TextAlign.Center,
-                        text = "Shortest Wake:\n$it"
-                    )
+                    HistoryListItemText(stringResource(R.string.shortest_s, it))
                 }
+
+                HistoryListItemText(stringResource(R.string.total_s, history.totalWake))
             }
         }
+    }
 
-        //todo
-        // above elements could probably be exported into shared composable
-        // move above texts to string resources
-        // make the UI better
-        // add daily sleep/wake total
+    @Composable
+    private fun HistoryListItemText(text: String) {
+        Text(
+            modifier = Modifier.padding(4.dp),
+            textAlign = TextAlign.Center,
+            text = text
+        )
+    }
+
+    @Composable
+    private fun HistoryListItemSummaryRow(content: @Composable RowScope.() -> Unit) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            content(this)
+        }
+    }
+
+    @Composable
+    private fun HistoryListItemSummaryTitle(title: String) {
+        Text(
+            style = MaterialTheme.typography.subtitle1,
+            text = title,
+            fontWeight = FontWeight.Bold,
+            textDecoration = TextDecoration.Underline
+        )
     }
 
     @Composable

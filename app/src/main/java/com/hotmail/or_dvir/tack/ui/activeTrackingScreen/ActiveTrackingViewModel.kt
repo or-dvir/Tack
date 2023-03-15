@@ -11,7 +11,7 @@ import com.hotmail.or_dvir.tack.models.Chronometer
 import com.hotmail.or_dvir.tack.models.DayNight
 import com.hotmail.or_dvir.tack.models.SleepWake
 import com.hotmail.or_dvir.tack.models.SleepWakeWindowModel
-import com.hotmail.or_dvir.tack.timeElapsed
+import com.hotmail.or_dvir.tack.elapsedTime
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -82,7 +82,7 @@ class ActiveTrackingViewModel @Inject constructor(
             writeSleepWakeWindowStartMillis(startTime)
         }
 
-        timeElapsed(startTime, System.currentTimeMillis()).let {
+        elapsedTime(startTime, System.currentTimeMillis()).let {
             chronometer.apply {
                 hours = it.first
                 minutes = it.second
@@ -218,7 +218,7 @@ class ActiveTrackingViewModel @Inject constructor(
         viewModelScope.launch {
             _state.emit(newState)
 
-            //AFTER the state has been updates, also update the shared preferences.
+            //AFTER the state has been updated, also update the shared preferences.
             //this must be done here because we need to wait for emit() to finish
             writeDayNight()
             writeSleepWake()

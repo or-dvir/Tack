@@ -3,7 +3,11 @@
 
     <string name="contentDescription_night">night time</string>
     <string name="contentDescription_day">day time</string>
+    <string name="contentDescription_trackingHistory">Tracking History</string>
     <string name="sleep">Sleep</string>
     <string name="wake">Wake</string>
-    <string name="contentDescription_trackingHistory">Tracking History</string>
+
+    <string name="longest_s">Longest:\n%s</string>
+    <string name="shortest_s">Shortest:\n%s</string>
+    <string name="total_s">Total:\n%s</string>
 </resources>
